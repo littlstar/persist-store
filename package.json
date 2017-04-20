@@ -1,28 +1,26 @@
 {
-  "name": "s3-marker",
+  "name": "persist-store",
   "version": "1.0.0",
-  "description": "Save marker files into S3 for redundancy",
+  "description": "Persist files across data stores for redundancy",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/littlstar/s3-marker.git"
+    "url": "git+https://github.com/littlstar/persist.git"
   },
   "keywords": [
-    "s3",
-    "marker",
     "data",
-    "processing",
-    "s3-lambda"
+    "file persist",
+    "persist"
   ],
   "author": "Madeline Cameron",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/littlstar/s3-marker/issues"
+    "url": "https://github.com/littlstar/persist/issues"
   },
-  "homepage": "https://github.com/littlstar/s3-marker#readme",
+  "homepage": "https://github.com/littlstar/persist#readme",
   "dependencies": {
     "s3-lambda": "^5.1.7"
   }

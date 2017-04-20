@@ -6,6 +6,8 @@ const defaultLocal = {
   dir: '$HOME/.persist/'
 }
 
+const defaultPersisters = [ 's3', 'local' ]
+
 class Persister {
   /**
    * Creates persisters for saving and loading
@@ -18,12 +20,24 @@ class Persister {
     this.persisters = []
 
     Object.keys(services).forEach(service => {
-      if (Array.isArray(service)) {
-        service.forEach(persister => {
-          this.persisters.push(require(`./lib/persisters/${service}`)(persister))
-        })
+      if(defaultPersisters.indexOf(service) > -1) {
+        let persisterModule = require(`./lib/persisters/${service}`)
+
+        if (Array.isArray(services[service])) {
+          services[service].forEach(persisterOpts => {
+            console.log("OPTS:", persisterOpts)
+            this.persisters.push(persisterModule(persisterOpts))
+          })
+        } else {
+          this.persisters.push(persisterModule(services[service]))
+        }
+
       } else {
-        this.persisters.push(require(`./lib/persisters/${service}`)(services[service]))
+        if(Array.isArray(service)) {
+          throw new Error('Array description of custom persisters is not allowed')
+        }
+
+        this.persisters.push(services[service])
       }
     })
 
