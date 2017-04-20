@@ -6,10 +6,6 @@ const defaultLocal = {
   dir: './data'
 }
 
-const defaultS3 = {
-  bucket: 'files'
-}
-
 class Persister {
   /**
    * Creates persisters for saving and loading
@@ -17,7 +13,7 @@ class Persister {
    * @return {Persist}     Persister
    */
   constructor(opts) {
-    let services = opts.services || { 'local': [defaultLocal], 's3': [defaultS3] }
+    let services = opts.services || { 'local': [defaultLocal] }
 
     this.persisters = []
 
