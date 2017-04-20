@@ -1,6 +1,6 @@
 {
   "name": "persist-store",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Persist files across data stores for redundancy",
   "main": "index.js",
   "scripts": {
