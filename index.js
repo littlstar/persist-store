@@ -3,7 +3,7 @@
 const path = require('path')
 
 const defaultLocal = {
-  dir: './data'
+  dir: '$HOME/.persist/'
 }
 
 class Persister {
