@@ -18,10 +18,14 @@ const persist = Persist({
     local: {
       dir: '../data'
     },
-    s3: {
+    s3: [{
       bucket: 'data',
       prefix: 'files'
     },
+    {
+      bucket: 'also-here',
+      prefix: 'markers'
+    }],
     custom: {
       context: {}
       save: function (name, contents, context) {},
