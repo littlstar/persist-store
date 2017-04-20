@@ -25,7 +25,6 @@ class Persister {
 
         if (Array.isArray(services[service])) {
           services[service].forEach(persisterOpts => {
-            console.log("OPTS:", persisterOpts)
             this.persisters.push(persisterModule(persisterOpts))
           })
         } else {
@@ -83,9 +82,7 @@ class Persister {
           const uniques = Array.from(new Set(values)).filter(item => item !== '')
 
           if (uniques.length > 1) {
-            console.error('File contents differ between sources! Aborting...', { values })
-
-            return reject('Could not resolve stored values...')
+            return reject('File contents differ between sources! Aborting...', { values })
           }
 
           return resolve(uniques[0])
