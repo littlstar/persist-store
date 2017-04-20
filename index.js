@@ -11,40 +11,27 @@ const defaultPersisters = [ 's3', 'local' ]
 class Persister {
   /**
    * Creates persisters for saving and loading
+   *
    * @param  {Object} opts Description of persisters
    * @return {Persist}     Persister
    */
-  constructor(opts) {
-    let services = opts.services || { 'local': [defaultLocal] }
-
+  constructor(services) {
     this.persisters = []
 
-    Object.keys(services).forEach(service => {
-      if(defaultPersisters.indexOf(service) > -1) {
-        let persisterModule = require(`./lib/persisters/${service}`)
+    services.forEach(service => {
+      if(defaultPersisters.indexOf(service.type) > -1) {
+        let persisterModule = require(`./lib/persisters/${service.type}`)
 
-        if (Array.isArray(services[service])) {
-          services[service].forEach(persisterOpts => {
-            this.persisters.push(persisterModule(persisterOpts))
-          })
-        } else {
-          this.persisters.push(persisterModule(services[service]))
-        }
-
+        this.persisters.push(persisterModule(service))
       } else {
-        if(Array.isArray(service)) {
-          throw new Error('Array description of custom persisters is not allowed')
-        }
-
-        this.persisters.push(services[service])
+        this.persisters.push(service.implementation)
       }
     })
-
-    return this
   }
 
   /**
    * Saves given value to the created persisters
+   *
    * @param  {String} name  Name of file to save
    * @param  {String} value Value of the file
    * @return {Promise}      Promise which resolves to statuses of save
@@ -61,6 +48,7 @@ class Persister {
 
   /**
    * Loads all files from persisters, checks they are all equal
+   *
    * @param  {String} name Name of file to load
    * @return {Promise}     Promise which resolves to value
    */
