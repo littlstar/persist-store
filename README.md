@@ -2,7 +2,6 @@
 
 `persist` enables you to persist files across data stores (locally, S3, custom data store).
 
-
 ## Install
 ```bash
 npm install persist --save
@@ -34,6 +33,8 @@ const persist = Persist({
 
 persist.save('file', '2017-04-04T12:00:00Z')
 ```
+
+If no services are given, only a local persister is created and files are saved in $HOME/.persist
 
 ## Methods
 
