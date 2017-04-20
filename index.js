@@ -7,8 +7,7 @@ const defaultLocal = {
 }
 
 const defaultS3 = {
-  bucket: 'files',
-  prefix: ''
+  bucket: 'files'
 }
 
 class Persister {
