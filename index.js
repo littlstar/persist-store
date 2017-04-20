@@ -3,7 +3,7 @@
 const path = require('path')
 
 const defaultLocal = {
-  dir: path.resolve('./data')
+  dir: './data'
 }
 
 const defaultS3 = {
@@ -11,7 +11,12 @@ const defaultS3 = {
   prefix: ''
 }
 
-class Persist {
+class Persister {
+  /**
+   * Creates persisters for saving and loading
+   * @param  {Object} opts Description of persisters
+   * @return {Persist}     Persister
+   */
   constructor(opts) {
     let services = opts.services || { 'local': [defaultLocal], 's3': [defaultS3] }
 
@@ -26,8 +31,16 @@ class Persist {
         this.persisters.push(require(`./lib/persisters/${service}`)(services[service]))
       }
     })
+
+    return this
   }
 
+  /**
+   * Saves given value to the created persisters
+   * @param  {String} name  Name of file to save
+   * @param  {String} value Value of the file
+   * @return {Promise}      Promise which resolves to statuses of save
+   */
   save(name, value) {
     let savePromises = []
 
@@ -38,6 +51,11 @@ class Persist {
     return Promise.all(savePromises)
   }
 
+  /**
+   * Loads all files from persisters, checks they are all equal
+   * @param  {String} name Name of file to load
+   * @return {Promise}     Promise which resolves to value
+   */
   load(name) {
     let loadPromises = []
 
@@ -63,4 +81,4 @@ class Persist {
   }
 }
 
-module.exports = Persist
+module.exports = Persister
