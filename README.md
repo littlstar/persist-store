@@ -26,8 +26,8 @@ const persist = Persist({
     }],
     custom: {
       context: {}
-      save: function (name, contents, context) {},
-      load: function (name, context) {}
+      save: function (name, contents, context) {},  // Must return Promise
+      load: function (name, context) {}  // Must return Promise
     }
   }
 })
