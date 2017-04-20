@@ -4,15 +4,24 @@
 
 ## Install
 ```bash
-npm install persist --save
+npm install persist-store --save
 ```
 
 ## Quick Example
 ```javascript
-const Persist = require('persist')
+const Persist = require('persist-store')
+
+class LogIt {
+  save(name, value) {
+    console.log("this does nothing: ", name, value)
+  }
+  load(name) {
+    console.log("shh, act like i loaded something", name)
+  }
+}
 
 // example options
-const persist = Persist({
+const persist = new Persist({
   services: {
     local: {
       dir: '../data'
@@ -23,11 +32,7 @@ const persist = Persist({
     {
       bucket: 'also-here'
     }],
-    custom: {
-      context: {}
-      save: function (name, contents, context) {},  // Must return Promise
-      load: function (name, context) {}  // Must return Promise
-    }
+    log: new LogIt()
   }
 })
 
