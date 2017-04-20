@@ -1,0 +1,29 @@
+{
+  "name": "s3-marker",
+  "version": "1.0.0",
+  "description": "Save marker files into S3 for redundancy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/littlstar/s3-marker.git"
+  },
+  "keywords": [
+    "s3",
+    "marker",
+    "data",
+    "processing",
+    "s3-lambda"
+  ],
+  "author": "Madeline Cameron",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/littlstar/s3-marker/issues"
+  },
+  "homepage": "https://github.com/littlstar/s3-marker#readme",
+  "dependencies": {
+    "s3-lambda": "^5.1.7"
+  }
+}
