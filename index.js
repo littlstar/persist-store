@@ -66,6 +66,11 @@ class Persister {
     return new Promise((resolve, reject) => {
       Promise.all(loadPromises)
         .then((values) => {
+
+          // Creates set from all values to uniqify
+          // Converts to Array
+          // Filters all empty values (because who cares.)
+
           const uniques = Array.from(new Set(values)).filter(item => item !== '')
 
           if (uniques.length > 1) {
