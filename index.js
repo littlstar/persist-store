@@ -2,10 +2,6 @@
 
 const path = require('path')
 
-const defaultLocal = {
-  dir: '$HOME/.persist/'
-}
-
 const defaultPersisters = [ 's3', 'local' ]
 
 class Persister {
@@ -22,7 +18,7 @@ class Persister {
       if(defaultPersisters.indexOf(service.type) > -1) {
         let persisterModule = require(`./lib/persisters/${service.type}`)
 
-        this.persisters.push(persisterModule(service))
+        this.persisters.push(new persisterModule(service))
       } else {
         this.persisters.push(service.implementation)
       }
