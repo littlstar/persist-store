@@ -9,8 +9,8 @@ const fs = require('fs')
 
 const folderName = 'data'
 const bucketName = 'bucket'
-const dataPath = path.resolve(__dirname, folderName)
-const bucketPath = path.resolve(dataPath, bucketName)
+const localPath = path.resolve(__dirname, folderName)
+const bucketPath = path.resolve(localPath, bucketName)
 
 class customPersister {
   constructor(opts) {
@@ -31,13 +31,15 @@ class customPersister {
 
 let persist
 
-function reset(persisters) {
-  rimraf(dataPath)
+function reset(persisters, files) {
+  rimraf(localPath)
   mkdirp(bucketPath)
 
   persist = new Persist(persisters)
 
-  fs.writeFileSync(path.resolve(`${bucketPath}/file`), '1234')
+  files.forEach(file => {
+    fs.writeFileSync(path.resolve(file.path), file.value)
+  })
 }
 
 test('local load', (t) => {
@@ -46,8 +48,10 @@ test('local load', (t) => {
   reset([
     {
       type: 'local',
-      path: bucketPath
+      path: localPath
     }
+  ], [
+    { path: `${localPath}/file`, value: 1234 }
   ])
 
   persist
@@ -63,9 +67,11 @@ test('s3 load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: dataPath,
+      localPath: localPath,
       bucket: bucketName
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' }
   ])
 
   persist
@@ -81,13 +87,16 @@ test('s3 + local load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: dataPath,
+      localPath: localPath,
       bucket: bucketName
     },
     {
       type: 'local',
-      path: bucketPath
+      path: localPath
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
@@ -103,12 +112,12 @@ test('s3 + local + custom load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: dataPath,
+      localPath: localPath,
       bucket: bucketName
     },
     {
       type: 'local',
-      path: bucketPath
+      path: localPath
     },
     {
       type: 'custom',
@@ -119,6 +128,9 @@ test('s3 + local + custom load', (t) => {
         ]
       })
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
@@ -136,22 +148,22 @@ test('differing values load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: dataPath,
+      localPath: localPath,
       bucket: bucketName
     },
     {
       type: 'local',
-      path: differingPath
+      path: localPath
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '4567' }
   ])
-
-  fs.writeFileSync(path.resolve(`${differingPath}/file`), '4567')
 
   persist
     .load('file')
     .then(() => {})
     .catch((e) => {
-      console.log("EE:", e)
       t.ok(!!e)
     })
 })
@@ -159,21 +171,20 @@ test('differing values load', (t) => {
 test('only return non-empty value', (t) => {
   t.plan(1)
 
-  const differingPath = path.resolve(__dirname, 'differing')
-
   reset([
     {
       type: 's3',
-      localPath: dataPath,
+      localPath: localPath,
       bucket: bucketName
     },
     {
       type: 'local',
-      path: differingPath
+      path: localPath
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '' }
   ])
-
-  fs.writeFileSync(path.resolve(`${differingPath}/file`), '')
 
   persist
     .load('file')
