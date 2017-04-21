@@ -21,22 +21,22 @@ class LogIt {
 }
 
 // example options
-const persist = new Persist({
+const persist = new Persist([
     {
       type: 'local',
       path: './data'
-    }
+    },
     {
       type: 's3',
       bucket: 'a_bucket',
       accessKeyId: '1234',
       secretAccessKey: '4567'
-    }
+    },
     {
       type: 'custom',
       implementation: new LogIt()
     }
-})
+])
 
 persist.save('file', '2017-04-04T12:00:00Z')
 ```
