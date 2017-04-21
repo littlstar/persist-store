@@ -70,7 +70,7 @@ class Persister {
           const uniques = Array.from(new Set(values)).filter(item => item !== '')
 
           if (uniques.length > 1) {
-            return reject('File contents differ between sources! Aborting...', { values })
+            return reject(`File contents differ between sources! Aborting... ${JSON.stringify({ values: values })}`)
           }
 
           return resolve(uniques[0])

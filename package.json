@@ -23,5 +23,11 @@
   "homepage": "https://github.com/littlstar/persist#readme",
   "dependencies": {
     "s3-lambda": "^5.1.7"
+  },
+  "devDependencies": {
+    "mkdirp": "^0.5.1",
+    "mock-aws-s3": "^2.4.0",
+    "rimraf": "^2.6.1",
+    "tape": "^4.6.3"
   }
 }
