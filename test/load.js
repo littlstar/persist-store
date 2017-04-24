@@ -22,10 +22,12 @@ class CustomPersister {
 
   save (name, value) {
     this.values[name] = value
+
+    return Promise.resolve()
   }
 
   load (name) {
-    return this.values[name]
+    return Promise.resolve(this.values[name])
   }
 }
 
