@@ -12,10 +12,10 @@ const bucketName = 'bucket'
 const localPath = path.resolve(__dirname, folderName)
 const bucketPath = path.resolve(localPath, bucketName)
 
-class customPersister {
+class CustomPersister {
   constructor(opts) {
     this.values = {}
-    opts.initial.forEach(obj => {
+    opts.initial.forEach((obj) => {
       this.values[obj.name] = String(obj.value)
     })
   }
@@ -37,7 +37,7 @@ function reset(persisters, files) {
 
   persist = new Persist(persisters)
 
-  files.forEach(file => {
+  files.forEach((file) => {
     fs.writeFileSync(path.resolve(file.path), file.value)
   })
 }
@@ -67,7 +67,7 @@ test('s3 load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: localPath,
+      localPath,
       bucket: bucketName
     }
   ], [
@@ -87,7 +87,7 @@ test('s3 + local load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: localPath,
+      localPath,
       bucket: bucketName
     },
     {
@@ -112,7 +112,7 @@ test('s3 + local + custom load', (t) => {
   reset([
     {
       type: 's3',
-      localPath: localPath,
+      localPath,
       bucket: bucketName
     },
     {
@@ -121,7 +121,7 @@ test('s3 + local + custom load', (t) => {
     },
     {
       type: 'custom',
-      implementation: new customPersister({
+      implementation: new CustomPersister({
         initial: [
           { name: 'file', value: 1234 },
           { name: 'test2', value: 3456 }
@@ -143,12 +143,10 @@ test('s3 + local + custom load', (t) => {
 test('differing values load', (t) => {
   t.plan(1)
 
-  const differingPath = path.resolve(__dirname, 'differing')
-
   reset([
     {
       type: 's3',
-      localPath: localPath,
+      localPath,
       bucket: bucketName
     },
     {
@@ -174,7 +172,7 @@ test('only return non-empty value', (t) => {
   reset([
     {
       type: 's3',
-      localPath: localPath,
+      localPath,
       bucket: bucketName
     },
     {

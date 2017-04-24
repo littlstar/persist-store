@@ -1,28 +1,24 @@
 'use strict'
 
-const path = require('path')
-
-const defaultLocal = {
-  dir: '$HOME/.persist/'
-}
-
-const defaultPersisters = [ 's3', 'local' ]
+const defaultPersisters = ['s3', 'local']
 
 class Persister {
+
   /**
    * Creates persisters for saving and loading
    *
    * @param  {Object} opts Description of persisters
    * @return {Persist}     Persister
    */
+
   constructor(services) {
     this.persisters = []
 
-    services.forEach(service => {
-      if(defaultPersisters.indexOf(service.type) > -1) {
-        let persisterModule = require(`./lib/persisters/${service.type}`)
+    services.forEach((service) => {
+      if (defaultPersisters.indexOf(service.type) > -1) {
+        const PersisterModule = require(`./lib/persisters/${service.type}`)
 
-        this.persisters.push(new persisterModule(service))
+        this.persisters.push(new PersisterModule(service))
       } else {
         this.persisters.push(service.implementation)
       }
@@ -36,10 +32,11 @@ class Persister {
    * @param  {String} value Value of the file
    * @return {Promise}      Promise which resolves to statuses of save
    */
-  save(name, value) {
-    let savePromises = []
 
-    this.persisters.forEach(persister => {
+  save(name, value) {
+    const savePromises = []
+
+    this.persisters.forEach((persister) => {
       savePromises.push(persister.save(name, value))
     })
 
@@ -52,10 +49,11 @@ class Persister {
    * @param  {String} name Name of file to load
    * @return {Promise}     Promise which resolves to value
    */
-  load(name) {
-    let loadPromises = []
 
-    this.persisters.forEach(persister => {
+  load(name) {
+    const loadPromises = []
+
+    this.persisters.forEach((persister) => {
       loadPromises.push(persister.load(name))
     })
 
@@ -70,7 +68,7 @@ class Persister {
           const uniques = Array.from(new Set(values)).filter(item => item !== '')
 
           if (uniques.length > 1) {
-            return reject(`File contents differ between sources! Aborting... ${JSON.stringify({ values: values })}`)
+            return reject(new Error(`File contents differ between sources! Aborting... ${JSON.stringify({ values })}`))
           }
 
           return resolve(uniques[0])

@@ -9,179 +9,144 @@ const fs = require('fs')
 
 const folderName = 'data'
 const bucketName = 'bucket'
-const dataPath = path.resolve(__dirname, folderName)
-const bucketPath = path.resolve(dataPath, bucketName)
+const localPath = path.resolve(__dirname, folderName)
+const bucketPath = path.resolve(localPath, bucketName)
 
-class customPersister {
-  constructor(opts) {
+class CustomPersister {
+  constructor (opts) {
     this.values = {}
-    opts.initial.forEach(obj => {
+    opts.initial.forEach((obj) => {
       this.values[obj.name] = String(obj.value)
     })
   }
 
-  save(name, value) {
+  save (name, value) {
     this.values[name] = value
   }
 
-  load(name) {
+  load (name) {
     return this.values[name]
-  }
-
-  dumpValues() {
-    return this.values
   }
 }
 
 let persist
 
-function reset(persisters) {
-  rimraf(dataPath)
+function reset (persisters) {
+  rimraf(localPath)
   mkdirp(bucketPath)
 
   persist = new Persist(persisters)
-
-  fs.writeFileSync(path.resolve(`${bucketPath}/file`), '1234')
 }
 
-test('local load', (t) => {
+test('local save', (t) => {
   t.plan(1)
 
   reset([
     {
       type: 'local',
-      path: bucketPath
+      path: localPath
     }
+  ], [
+    { path: `${localPath}/file`, value: 1234 }
   ])
 
   persist
-    .load('file')
-    .then((value) => {
-      t.equal(value, '1234')
+    .save('file', '1234')
+    .then(() => {
+      const readValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf-8' })
+      t.equal(readValue, '1234')
     })
 })
 
-test('s3 load', (t) => {
+test('s3 save', (t) => {
   t.plan(1)
 
   reset([
     {
       type: 's3',
-      localPath: dataPath,
+      localPath,
       bucket: bucketName
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' }
   ])
 
   persist
-    .load('file')
-    .then((value) => {
-      t.equal(value, '1234')
+    .save('file', '1234')
+    .then(() => {
+      const readValue = fs.readFileSync(path.resolve(`${bucketPath}/file`), { encoding: 'utf8' })
+      t.equal(readValue, '1234')
     })
 })
 
-test('s3 + local load', (t) => {
-  t.plan(1)
+test('s3 + local save', (t) => {
+  t.plan(2)
 
   reset([
     {
       type: 's3',
-      localPath: dataPath,
-      bucket: bucketName
-    },
-    {
-      type: 'local',
-      path: bucketPath
-    }
-  ])
-
-  persist
-    .load('file')
-    .then((value) => {
-      t.equal(value, '1234')
-    })
-})
-
-test('s3 + local + custom load', (t) => {
-  t.plan(1)
-
-  reset([
-    {
-      type: 's3',
-      localPath: dataPath,
+      localPath,
       bucket: bucketName
     },
     {
       type: 'local',
-      path: bucketPath
+      path: localPath
+    }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '1234' }
+  ])
+
+  persist
+    .save('file', '1234')
+    .then(() => {
+      const localValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
+      t.equal(localValue, '1234')
+
+      const s3Value = fs.readFileSync(path.resolve(`${bucketPath}/file`), { encoding: 'utf8' })
+      t.equal(s3Value, '1234')
+    })
+})
+
+test('s3 + local + custom save', (t) => {
+  t.plan(3)
+
+  const custom = new CustomPersister({
+    initial: [
+          { name: 'file', value: 1234 },
+          { name: 'test2', value: 3456 }
+    ]
+  })
+
+  reset([
+    {
+      type: 's3',
+      localPath,
+      bucket: bucketName
+    },
+    {
+      type: 'local',
+      path: localPath
     },
     {
       type: 'custom',
-      implementation: new customPersister({
-        initial: [
-          { name: 'file', value: 1234 },
-          { name: 'test2', value: 3456 }
-        ]
-      })
+      implementation: custom
     }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
-    .load('file')
-    .then((value) => {
-      t.equal(value, '1234')
-    })
-})
+    .save('file', '1234')
+    .then(() => {
+      const localValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
+      t.equal(localValue, '1234')
 
-test('differing values load', (t) => {
-  t.plan(1)
+      const s3Value = fs.readFileSync(path.resolve(`${bucketPath}/file`), { encoding: 'utf8' })
+      t.equal(s3Value, '1234')
 
-  const differingPath = path.resolve(__dirname, 'differing')
-
-  reset([
-    {
-      type: 's3',
-      localPath: dataPath,
-      bucket: bucketName
-    },
-    {
-      type: 'local',
-      path: differingPath
-    }
-  ])
-
-  fs.writeFileSync(path.resolve(`${differingPath}/file`), '4567')
-
-  persist
-    .load('file')
-    .then(() => {})
-    .catch((e) => {
-      console.log("EE:", e)
-      t.ok(!!e)
-    })
-})
-
-test('only return non-empty value', (t) => {
-  t.plan(1)
-
-  const differingPath = path.resolve(__dirname, 'differing')
-
-  reset([
-    {
-      type: 's3',
-      localPath: dataPath,
-      bucket: bucketName
-    },
-    {
-      type: 'local',
-      path: differingPath
-    }
-  ])
-
-  fs.writeFileSync(path.resolve(`${differingPath}/file`), '')
-
-  persist
-    .load('file')
-    .then((value) => {
-      t.equal(value, '1234')
+      const customValue = custom.load('file')
+      t.equal(customValue, '1234')
     })
 })
