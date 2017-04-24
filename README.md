@@ -70,3 +70,7 @@ persist
     console.error(`Something happened:`, { error: String(error.stack || error) })
   })
 ```
+
+## Testing
+
+If you want to mock the S3 persist-store in a test, you can pass `localPath` along with `bucket` and S3 will use `${localPath}/${bucket}` as a mock S3 bucket
