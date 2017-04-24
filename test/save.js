@@ -53,7 +53,7 @@ test('local save', (t) => {
   persist
     .save('file', '1234')
     .then(() => {
-      const readValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf-8' })
+      const readValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
       t.equal(readValue, '1234')
     })
 })
