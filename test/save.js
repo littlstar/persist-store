@@ -47,7 +47,7 @@ test('local save', (t) => {
       path: localPath
     }
   ], [
-    { path: `${localPath}/file`, value: 1234 }
+    { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
@@ -113,8 +113,8 @@ test('s3 + local + custom save', (t) => {
 
   const custom = new CustomPersister({
     initial: [
-          { name: 'file', value: 1234 },
-          { name: 'test2', value: 3456 }
+          { name: 'file', value: '1234' },
+          { name: 'test2', value: '3456' }
     ]
   })
 

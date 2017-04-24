@@ -13,25 +13,25 @@ const localPath = path.resolve(__dirname, folderName)
 const bucketPath = path.resolve(localPath, bucketName)
 
 class CustomPersister {
-  constructor(opts) {
+  constructor (opts) {
     this.values = {}
     opts.initial.forEach((obj) => {
       this.values[obj.name] = String(obj.value)
     })
   }
 
-  save(name, value) {
+  save (name, value) {
     this.values[name] = value
   }
 
-  load(name) {
+  load (name) {
     return this.values[name]
   }
 }
 
 let persist
 
-function reset(persisters, files) {
+function reset (persisters, files) {
   rimraf(localPath)
   mkdirp(bucketPath)
 
@@ -51,7 +51,7 @@ test('local load', (t) => {
       path: localPath
     }
   ], [
-    { path: `${localPath}/file`, value: 1234 }
+    { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
@@ -123,8 +123,8 @@ test('s3 + local + custom load', (t) => {
       type: 'custom',
       implementation: new CustomPersister({
         initial: [
-          { name: 'file', value: 1234 },
-          { name: 'test2', value: 3456 }
+          { name: 'file', value: '1234' },
+          { name: 'test2', value: '3456' }
         ]
       })
     }
@@ -160,7 +160,9 @@ test('differing values load', (t) => {
 
   persist
     .load('file')
-    .then(() => {})
+    .then(() => {
+      t.fail('Differing values successfully loaded.')
+    })
     .catch((e) => {
       t.ok(!!e)
     })
