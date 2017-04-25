@@ -1,13 +1,16 @@
-## persist
+persist-store
+=============
 
-`persist` enables you to persist files across data stores (locally, S3, custom data store).
+`persist-store` enables you to persist files across data stores (locally, S3, custom data store).
 
 ## Install
+
 ```bash
 npm install persist-store --save
 ```
 
-## Quick Example
+## Usage
+
 ```javascript
 const Persist = require('persist-store')
 
@@ -46,18 +49,16 @@ persist.save('file', '2017-04-04T12:00:00Z')
 
 If no services are given, only a local persister is created and files are saved in $HOME/.persist
 
-## Methods
+## API
 
-### save
-save(name, contents)
+### store#save(name, contents)
 
 Saves a file across all stores
 ```javascript
 persist.save('file', '2017-04-04T12:00:00Z')
 ```
 
-### load
-load(name)
+### store#load(name)
 
 Checks all data stores for the file, makes sure they are all equal, then returns the value
 ```javascript
@@ -74,3 +75,7 @@ persist
 ## Testing
 
 If you want to mock the S3 persist-store in a test, you can pass `localPath` along with `bucket` and S3 will use `${localPath}/${bucket}` as a mock S3 bucket
+
+## License
+
+MIT
