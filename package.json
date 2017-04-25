@@ -1,27 +1,35 @@
 {
-  "name": "persist-store",
-  "version": "1.0.2",
+  "author": "Madeline Cameron",
+  "bugs": {
+    "url": "https://github.com/littlstar/persist/issues"
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "s3-lambda": "^5.1.7"
+  },
   "description": "Persist files across data stores for redundancy",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-plugin-import": "^2.2.0",
+    "mock-aws-s3": "^2.4.0",
+    "rimraf": "^2.6.1",
+    "tape": "^4.6.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/littlstar/persist.git"
-  },
+  "homepage": "https://github.com/littlstar/persist#readme",
   "keywords": [
     "data",
     "file persist",
     "persist"
   ],
-  "author": "Madeline Cameron",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/littlstar/persist/issues"
+  "license": "MIT",
+  "main": "index.js",
+  "name": "persist-store",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/littlstar/persist.git"
   },
-  "homepage": "https://github.com/littlstar/persist#readme",
-  "dependencies": {
-    "s3-lambda": "^5.1.7"
-  }
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.3"
 }
