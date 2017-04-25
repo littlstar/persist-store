@@ -1,7 +1,7 @@
 {
   "author": "Madeline Cameron",
   "bugs": {
-    "url": "https://github.com/littlstar/persist/issues"
+    "url": "https://github.com/littlstar/persist-store/issues"
   },
   "dependencies": {
     "mkdirp": "^0.5.1",
@@ -15,7 +15,7 @@
     "rimraf": "^2.6.1",
     "tape": "^4.6.3"
   },
-  "homepage": "https://github.com/littlstar/persist#readme",
+  "homepage": "https://github.com/littlstar/persist-store",
   "keywords": [
     "data",
     "file persist",
@@ -26,10 +26,13 @@
   "name": "persist-store",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/littlstar/persist.git"
+    "url": "git+https://github.com/littlstar/persist-store.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.0.3"
+  "version": "1.0.3",
+  "directories": {
+    "test": "test"
+  }
 }
