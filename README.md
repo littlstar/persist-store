@@ -18,11 +18,11 @@ const Persist = require('persist-store')
 // custom persisters should implement promises
 
 class LogIt {
-  save(name, value) {
+  save(value) {
     return Promise.resolve('this does nothing')
   }
-  load(name) {
-    return Promise.resolve("shh, act like i loaded something:" + name)
+  load() {
+    return Promise.resolve("shh, act like i loaded something")
   }
 }
 
@@ -30,11 +30,14 @@ class LogIt {
 const persist = new Persist([
     {
       type: 'local',
-      path: './data'
+      path: './data',
+      name: 'file'
     },
     {
       type: 's3',
       bucket: 'a_bucket',
+      prefix: 'some_prefix',
+      key: 'the_key',
       accessKeyId: '1234',
       secretAccessKey: '4567'
     },
@@ -44,26 +47,26 @@ const persist = new Persist([
     }
 ])
 
-persist.save('file', '2017-04-04T12:00:00Z')
+persist.save('2017-04-04T12:00:00Z')
 ```
 
 If no services are given, only a local persister is created and files are saved in $HOME/.persist
 
 ## API
 
-### store#save(name, contents)
+### store#save(contents)
 
 Saves a file across all stores
 ```javascript
-persist.save('file', '2017-04-04T12:00:00Z')
+persist.save('2017-04-04T12:00:00Z')
 ```
 
-### store#load(name)
+### store#load()
 
 Checks all data stores for the file, makes sure they are all equal, then returns the value
 ```javascript
 persist
-  .load('file')
+  .load()
   .then((file) => {
     console.log(`Here is the file: ${file}`)
   })
