@@ -1,13 +1,16 @@
-## persist
+persist-store
+=============
 
-`persist` enables you to persist files across data stores (locally, S3, custom data store).
+`persist-store` enables you to persist files across data stores (locally, S3, custom data store).
 
 ## Install
+
 ```bash
 npm install persist-store --save
 ```
 
 ## Quick Example
+
 ```javascript
 const Persist = require('persist-store')
 
