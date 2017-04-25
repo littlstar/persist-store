@@ -11,12 +11,15 @@ npm install persist-store --save
 ```javascript
 const Persist = require('persist-store')
 
+// Under the hood, persist-store uses Promises, so
+// custom persisters should implement promises
+
 class LogIt {
   save(name, value) {
-    console.log("this does nothing: ", name, value)
+    return Promise.resolve('this does nothing')
   }
   load(name) {
-    console.log("shh, act like i loaded something", name)
+    return Promise.resolve("shh, act like i loaded something:" + name)
   }
 }
 
@@ -67,3 +70,7 @@ persist
     console.error(`Something happened:`, { error: String(error.stack || error) })
   })
 ```
+
+## Testing
+
+If you want to mock the S3 persist-store in a test, you can pass `localPath` along with `bucket` and S3 will use `${localPath}/${bucket}` as a mock S3 bucket
