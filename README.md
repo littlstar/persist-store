@@ -22,7 +22,7 @@ class LogIt {
     return Promise.resolve('this does nothing')
   }
   load() {
-    return Promise.resolve("shh, act like i loaded something")
+    return Promise.resolve('shh, act like i loaded something')
   }
 }
 
