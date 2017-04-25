@@ -50,7 +50,7 @@ test('local load', (t) => {
   reset([
     {
       type: 'local',
-      path: `${localPath}`,
+      path: localPath,
       name: 'file'
     }
   ], [
@@ -97,7 +97,7 @@ test('s3 + local load', (t) => {
     },
     {
       type: 'local',
-      path: `${localPath}`,
+      path: localPath,
       name: 'file'
     }
   ], [
@@ -124,7 +124,7 @@ test('s3 + local + custom load', (t) => {
     },
     {
       type: 'local',
-      path: `${localPath}`,
+      path: localPath,
       name: 'file'
     },
     {
@@ -159,7 +159,7 @@ test('differing values load', (t) => {
     },
     {
       type: 'local',
-      path: `${localPath}`,
+      path: localPath,
       name: 'file'
     }
   ], [
@@ -189,7 +189,7 @@ test('only return non-empty value', (t) => {
     },
     {
       type: 'local',
-      path: `${localPath}`,
+      path: localPath,
       name: 'file'
     }
   ], [
