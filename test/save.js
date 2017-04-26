@@ -46,8 +46,7 @@ test('local save', (t) => {
   reset([
     {
       type: 'local',
-      path: localPath,
-      name: 'file'
+      path: `${localPath}/file`
     }
   ], [
     { path: `${localPath}/file`, value: '1234' }
@@ -95,8 +94,7 @@ test('s3 + local save', (t) => {
     },
     {
       type: 'local',
-      path: localPath,
-      name: 'file'
+      path: `${localPath}/file`
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' },
@@ -132,8 +130,7 @@ test('s3 + local + custom save', (t) => {
     },
     {
       type: 'local',
-      path: localPath,
-      name: 'file'
+      path: `${localPath}/file`
     },
     {
       type: 'custom',

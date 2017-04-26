@@ -30,13 +30,11 @@ class LogIt {
 const persist = new Persist([
     {
       type: 'local',
-      path: './data',
-      name: 'file'
+      path: './data/file',
     },
     {
       type: 's3',
-      bucket: 'a_bucket',
-      prefix: 'some_prefix',
+      bucket: 'a_bucket/some_prefix',
       key: 'the_key',
       accessKeyId: '1234',
       secretAccessKey: '4567'
