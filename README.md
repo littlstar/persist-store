@@ -34,8 +34,8 @@ const persist = new Persist([
     },
     {
       type: 's3',
-      bucket: 'a_bucket/some_prefix',
-      key: 'the_key',
+      bucket: 'a_bucket',
+      key: 'some_prefix/the_key',
       accessKeyId: '1234',
       secretAccessKey: '4567'
     },
