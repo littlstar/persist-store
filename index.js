@@ -33,11 +33,11 @@ class Persister {
    * @return {Promise}      Promise which resolves to statuses of save
    */
 
-  save(name, value) {
+  save(value) {
     const savePromises = []
 
     this.persisters.forEach((persister) => {
-      savePromises.push(persister.save(name, value))
+      savePromises.push(persister.save(value))
     })
 
     return Promise.all(savePromises)
@@ -50,11 +50,11 @@ class Persister {
    * @return {Promise}     Promise which resolves to value
    */
 
-  load(name) {
+  load() {
     const loadPromises = []
 
     this.persisters.forEach((persister) => {
-      loadPromises.push(persister.load(name))
+      loadPromises.push(persister.load())
     })
 
     return new Promise((resolve, reject) => {

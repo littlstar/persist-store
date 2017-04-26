@@ -13,27 +13,27 @@ const localPath = path.resolve(__dirname, folderName)
 const bucketPath = path.resolve(localPath, bucketName)
 
 class CustomPersister {
-  constructor (opts) {
+  constructor(opts) {
     this.values = {}
     opts.initial.forEach((obj) => {
-      this.values[obj.name] = String(obj.value)
+      this.values.file = String(obj.value)
     })
   }
 
-  save (name, value) {
-    this.values[name] = value
+  save(value) {
+    this.values.file = value
 
     return Promise.resolve()
   }
 
-  load (name) {
-    return Promise.resolve(this.values[name])
+  load() {
+    return Promise.resolve(this.values.file)
   }
 }
 
 let persist
 
-function reset (persisters, files) {
+function reset(persisters, files) {
   rimraf(localPath)
   mkdirp(bucketPath)
 
@@ -50,14 +50,14 @@ test('local load', (t) => {
   reset([
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     }
   ], [
     { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
-    .load('file')
+    .load()
     .then((value) => {
       t.equal(value, '1234')
     })
@@ -70,14 +70,15 @@ test('s3 load', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' }
   ])
 
   persist
-    .load('file')
+    .load()
     .then((value) => {
       t.equal(value, '1234')
     })
@@ -90,11 +91,12 @@ test('s3 + local load', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     },
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' },
@@ -102,7 +104,7 @@ test('s3 + local load', (t) => {
   ])
 
   persist
-    .load('file')
+    .load()
     .then((value) => {
       t.equal(value, '1234')
     })
@@ -115,18 +117,18 @@ test('s3 + local + custom load', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     },
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     },
     {
       type: 'custom',
       implementation: new CustomPersister({
         initial: [
-          { name: 'file', value: '1234' },
-          { name: 'test2', value: '3456' }
+          { name: 'file', value: '1234' }
         ]
       })
     }
@@ -136,7 +138,7 @@ test('s3 + local + custom load', (t) => {
   ])
 
   persist
-    .load('file')
+    .load()
     .then((value) => {
       t.equal(value, '1234')
     })
@@ -149,11 +151,12 @@ test('differing values load', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     },
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' },
@@ -161,7 +164,7 @@ test('differing values load', (t) => {
   ])
 
   persist
-    .load('file')
+    .load()
     .then(() => {
       t.fail('Differing values successfully loaded.')
     })
@@ -177,11 +180,12 @@ test('only return non-empty value', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     },
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' },
@@ -189,7 +193,7 @@ test('only return non-empty value', (t) => {
   ])
 
   persist
-    .load('file')
+    .load()
     .then((value) => {
       t.equal(value, '1234')
     })

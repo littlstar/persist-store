@@ -13,27 +13,27 @@ const localPath = path.resolve(__dirname, folderName)
 const bucketPath = path.resolve(localPath, bucketName)
 
 class CustomPersister {
-  constructor (opts) {
+  constructor(opts) {
     this.values = {}
     opts.initial.forEach((obj) => {
       this.values[obj.name] = String(obj.value)
     })
   }
 
-  save (name, value) {
-    this.values[name] = value
+  save(value) {
+    this.values.file = value
 
     return Promise.resolve()
   }
 
-  load (name) {
-    return Promise.resolve(this.values[name])
+  load() {
+    return Promise.resolve(this.values.file)
   }
 }
 
 let persist
 
-function reset (persisters) {
+function reset(persisters) {
   rimraf(localPath)
   mkdirp(bucketPath)
 
@@ -46,14 +46,14 @@ test('local save', (t) => {
   reset([
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     }
   ], [
     { path: `${localPath}/file`, value: '1234' }
   ])
 
   persist
-    .save('file', '1234')
+    .save('1234')
     .then(() => {
       const readValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
       t.equal(readValue, '1234')
@@ -67,14 +67,15 @@ test('s3 save', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' }
   ])
 
   persist
-    .save('file', '1234')
+    .save('1234')
     .then(() => {
       const readValue = fs.readFileSync(path.resolve(`${bucketPath}/file`), { encoding: 'utf8' })
       t.equal(readValue, '1234')
@@ -88,11 +89,12 @@ test('s3 + local save', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     },
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     }
   ], [
     { path: `${bucketPath}/file`, value: '1234' },
@@ -100,7 +102,7 @@ test('s3 + local save', (t) => {
   ])
 
   persist
-    .save('file', '1234')
+    .save('1234')
     .then(() => {
       const localValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
       t.equal(localValue, '1234')
@@ -115,8 +117,7 @@ test('s3 + local + custom save', (t) => {
 
   const custom = new CustomPersister({
     initial: [
-          { name: 'file', value: '1234' },
-          { name: 'test2', value: '3456' }
+          { name: 'file', value: '1234' }
     ]
   })
 
@@ -124,11 +125,12 @@ test('s3 + local + custom save', (t) => {
     {
       type: 's3',
       localPath,
-      bucket: bucketName
+      bucket: bucketName,
+      key: 'file'
     },
     {
       type: 'local',
-      path: localPath
+      path: `${localPath}/file`
     },
     {
       type: 'custom',
@@ -140,7 +142,7 @@ test('s3 + local + custom save', (t) => {
   ])
 
   persist
-    .save('file', '1234')
+    .save('1234')
     .then(() => {
       const localValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
       t.equal(localValue, '1234')
@@ -148,7 +150,8 @@ test('s3 + local + custom save', (t) => {
       const s3Value = fs.readFileSync(path.resolve(`${bucketPath}/file`), { encoding: 'utf8' })
       t.equal(s3Value, '1234')
 
-      const customValue = custom.load('file')
-      t.equal(customValue, '1234')
+      custom.load().then((val) => {
+        t.equal(val, '1234')
+      })
     })
 })
