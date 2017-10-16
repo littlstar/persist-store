@@ -33,48 +33,43 @@ class Persister {
    * @return {Promise}      Promise which resolves to statuses of save
    */
 
-  save(value) {
+  async save(file, value) {
     const savePromises = []
 
-    this.persisters.forEach((persister) => {
-      savePromises.push(persister.save(value))
-    })
+    for (const persister of this.persisters) {
+      savePromises.push(persister.save(file, value))
+    }
 
-    return Promise.all(savePromises)
+    await Promise.all(savePromises)
   }
 
   /**
    * Loads all files from persisters, checks they are all equal
    *
-   * @param  {String} name Name of file to load
+   * @param  {String} file Name of file to load
    * @return {Promise}     Promise which resolves to value
    */
 
-  load() {
+  async load(file) {
     const loadPromises = []
 
-    this.persisters.forEach((persister) => {
-      loadPromises.push(persister.load())
-    })
+    for (const persister of this.persisters) {
+      loadPromises.push(persister.load(file))
+    }
 
-    return new Promise((resolve, reject) => {
-      Promise.all(loadPromises)
-        .then((values) => {
+    const files = await Promise.all(loadPromises)
 
-          // Creates set from all values to uniqify
-          // Converts to Array
-          // Filters all empty values (because who cares.)
+    // Creates set from all values to uniqify
+    // Converts to Array
+    // Filters all empty values (because who cares.)
 
-          const uniques = Array.from(new Set(values)).filter(item => item !== '')
+    const uniques = Array.from(new Set(files)).filter(loadedFile => loadedFile !== '')
 
-          if (uniques.length > 1) {
-            return reject(new Error(`File contents differ between sources! Aborting... ${JSON.stringify({ values })}`))
-          }
+    if (uniques.length > 1) {
+      throw new Error(`File contents differ between sources! Aborting... ${JSON.stringify({ files })}`)
+    }
 
-          return resolve(uniques[0])
-        })
-        .catch(reject)
-    })
+    return uniques[0]
   }
 }
 

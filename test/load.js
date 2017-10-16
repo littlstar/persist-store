@@ -57,13 +57,13 @@ test('local load', (t) => {
   ])
 
   persist
-    .load()
+    .load('file')
     .then((value) => {
       t.equal(value, '1234')
     })
 })
 
-test('s3 load', (t) => {
+test('s3 load', async (t) => {
   t.plan(1)
 
   reset([
@@ -77,14 +77,12 @@ test('s3 load', (t) => {
     { path: `${bucketPath}/file`, value: '1234' }
   ])
 
-  persist
-    .load()
-    .then((value) => {
-      t.equal(value, '1234')
-    })
+  const file = await persist.load('file')
+
+  t.equal(file, '1234')
 })
 
-test('s3 + local load', (t) => {
+test('s3 + local load', async (t) => {
   t.plan(1)
 
   reset([
@@ -103,14 +101,12 @@ test('s3 + local load', (t) => {
     { path: `${localPath}/file`, value: '1234' }
   ])
 
-  persist
-    .load()
-    .then((value) => {
-      t.equal(value, '1234')
-    })
+  const file = await persist.load('file')
+
+  t.equal(file, '1234')
 })
 
-test('s3 + local + custom load', (t) => {
+test('s3 + local + custom load', async (t) => {
   t.plan(1)
 
   reset([
@@ -137,14 +133,12 @@ test('s3 + local + custom load', (t) => {
     { path: `${localPath}/file`, value: '1234' }
   ])
 
-  persist
-    .load()
-    .then((value) => {
-      t.equal(value, '1234')
-    })
+  const file = await persist.load('file')
+
+  t.equal(file, '1234')
 })
 
-test('differing values load', (t) => {
+test('differing values load', async (t) => {
   t.plan(1)
 
   reset([
@@ -163,17 +157,16 @@ test('differing values load', (t) => {
     { path: `${localPath}/file`, value: '4567' }
   ])
 
-  persist
-    .load()
-    .then(() => {
-      t.fail('Differing values successfully loaded.')
-    })
-    .catch((e) => {
-      t.ok(!!e)
-    })
+  try {
+    await persist.load('file')
+
+    t.fail('Differing contents loaded successfully!')
+  } catch (e) {
+    t.ok(!!e)
+  }
 })
 
-test('only return non-empty value', (t) => {
+test('only return non-empty value', async (t) => {
   t.plan(1)
 
   reset([
@@ -192,9 +185,7 @@ test('only return non-empty value', (t) => {
     { path: `${localPath}/file`, value: '' }
   ])
 
-  persist
-    .load()
-    .then((value) => {
-      t.equal(value, '1234')
-    })
+  const file = await persist.load('file')
+
+  t.equal(file, '1234')
 })
