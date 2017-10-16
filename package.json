@@ -5,7 +5,8 @@
   },
   "dependencies": {
     "mkdirp": "^0.5.1",
-    "s3-lambda": "^5.1.7"
+    "s3-lambda": "^5.1.7",
+    "util.promisify": "^1.0.0"
   },
   "description": "Persist files across data stores for redundancy",
   "devDependencies": {
