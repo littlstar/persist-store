@@ -63,7 +63,7 @@ class Persister {
     // Converts to Array
     // Filters all empty values (because who cares.)
 
-    const uniques = Array.from(new Set(files)).filter(loadedFile => loadedFile !== '')
+    const uniques = Array.from(new Set(files)).filter(loadedFile => loadedFile.replace('\n', '') !== '')
 
     if (uniques.length > 1) {
       throw new Error(`File contents differ between sources! Aborting... ${JSON.stringify({ files })}`)
