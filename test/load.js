@@ -189,3 +189,28 @@ test('only return non-empty value', async (t) => {
 
   t.equal(file, '1234')
 })
+
+// Caused by editing the file manually
+test('strips newline character', async (t) => {
+  t.plan(1)
+
+  reset([
+    {
+      type: 's3',
+      localPath,
+      bucket: bucketName,
+      key: 'file'
+    },
+    {
+      type: 'local',
+      path: `${localPath}/file`
+    }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234\n' },
+    { path: `${localPath}/file`, value: '1234' }
+  ])
+
+  const file = await persist.load('file')
+
+  t.equal(file, '1234')
+})
