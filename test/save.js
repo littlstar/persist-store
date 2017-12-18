@@ -110,6 +110,34 @@ test('s3 + local save', async (t) => {
   t.equal(s3Value, '1234')
 })
 
+test('s3 + local save', async (t) => {
+  t.plan(2)
+
+  reset([
+    {
+      type: 's3',
+      localPath,
+      bucket: bucketName,
+      key: 'file'
+    },
+    {
+      type: 'local',
+      path: `${localPath}/file`
+    }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '1234' }
+  ])
+
+  await persist.save('1234')
+
+  const s3Value = fs.readFileSync(path.resolve(`${bucketPath}/file`), { encoding: 'utf8' })
+  const localValue = fs.readFileSync(path.resolve(`${localPath}/file`), { encoding: 'utf8' })
+
+  t.equal(s3Value, localValue)
+  t.equal(s3Value, '1234')
+})
+
 test('s3 + local + custom save', async (t) => {
   t.plan(3)
 

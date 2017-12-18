@@ -106,6 +106,31 @@ test('s3 + local load', async (t) => {
   t.equal(file, '1234')
 })
 
+test('s3 + local load w/o name specified', async (t) => {
+  t.plan(1)
+
+  reset([
+    {
+      type: 's3',
+      localPath,
+      bucket: bucketName,
+      key: 'file'
+    },
+    {
+      type: 'local',
+      path: `${localPath}/file`
+    }
+  ], [
+    { path: `${bucketPath}/file`, value: '1234' },
+    { path: `${localPath}/file`, value: '1234' }
+  ])
+
+  const file = await persist.load()
+
+  t.equal(file, '1234')
+})
+
+
 test('s3 + local + custom load', async (t) => {
   t.plan(1)
 
