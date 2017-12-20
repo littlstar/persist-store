@@ -37,7 +37,12 @@ class Persister {
     const savePromises = []
 
     for (const persister of this.persisters) {
-      savePromises.push(persister.save(file, value))
+      // If `value` is not declared, we presume `file` is the value and use default filename
+      if (value) {
+        savePromises.push(persister.save(file, value))
+      } else {
+        savePromises.push(persister.save(file))
+      }
     }
 
     await Promise.all(savePromises)
@@ -54,6 +59,7 @@ class Persister {
     const loadPromises = []
 
     for (const persister of this.persisters) {
+      // If `file` is not declared, we use the default filename
       loadPromises.push(persister.load(file))
     }
 
